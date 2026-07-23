@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Budget Seriola lalandi RAS — Process Flow &amp; Layout</title>
+<style>
+  :root{
+    --paper:#e9eef0; --sheet:#ffffff; --ink:#0f2129; --ink-soft:#4a5f68;
+    --line:#c6d4d9; --grid:#e6edef; --hair:#d5e0e3;
+    --water:#0f93b8; --water-deep:#0b5c76;
+    --waste:#8a5a34; --air:#3f8f57; --o2:#e07a2f; --heat:#c24a3a;
+    --badge:#0b5c76; --badge-ink:#ffffff;
+    --sans:"Helvetica Neue","Arial Nova",Arial,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0a1418; --sheet:#122129; --ink:#dbe8ec; --ink-soft:#8fa6ae;
+      --line:#294049; --grid:#182a31; --hair:#223740;
+      --water:#2bb6dd; --water-deep:#8ad6ec;
+      --waste:#cb9058; --air:#63bb7d; --o2:#f0975b; --heat:#e2705f;
+      --badge:#2bb6dd; --badge-ink:#08171d;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#e9eef0; --sheet:#ffffff; --ink:#0f2129; --ink-soft:#4a5f68;
+    --line:#c6d4d9; --grid:#e6edef; --hair:#d5e0e3;
+    --water:#0f93b8; --water-deep:#0b5c76; --waste:#8a5a34; --air:#3f8f57;
+    --o2:#e07a2f; --heat:#c24a3a; --badge:#0b5c76; --badge-ink:#ffffff;
+  }
+  :root[data-theme="dark"]{
+    --paper:#0a1418; --sheet:#122129; --ink:#dbe8ec; --ink-soft:#8fa6ae;
+    --line:#294049; --grid:#182a31; --hair:#223740;
+    --water:#2bb6dd; --water-deep:#8ad6ec; --waste:#cb9058; --air:#63bb7d;
+    --o2:#f0975b; --heat:#e2705f; --badge:#2bb6dd; --badge-ink:#08171d;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--sans);
+    line-height:1.5; -webkit-font-smoothing:antialiased;
+    padding:clamp(12px,3vw,36px);
+  }
+  .sheet{
+    max-width:1120px; margin:0 auto; background:var(--sheet);
+    border:1.5px solid var(--line);
+    box-shadow:0 1px 0 var(--hair), 0 24px 60px -40px rgba(0,0,0,.4);
+  }
+  .sheet__inner{ border:1px solid var(--hair); margin:10px; }
+
+  /* ---- Title block ---- */
+  .titleblock{
+    display:grid; grid-template-columns:1.6fr repeat(3,minmax(0,.8fr));
+    border-bottom:1.5px solid var(--line);
+  }
+  .tb-cell{ padding:14px 16px; border-left:1px solid var(--hair); }
+  .tb-cell:first-child{ border-left:0; }
+  .tb-k{ font-family:var(--mono); font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 4px; }
+  .tb-v{ font-family:var(--mono); font-size:14px; font-weight:600; margin:0; }
+  .tb-title{ font-size:clamp(18px,2.4vw,25px); font-weight:700; letter-spacing:-.01em;
+    margin:0 0 3px; text-wrap:balance; }
+  .tb-sub{ margin:0; color:var(--ink-soft); font-size:13px; }
+  .tb-sci{ font-style:italic; }
+
+  section{ padding:clamp(16px,2.6vw,30px); border-bottom:1px dashed var(--hair); }
+  section:last-child{ border-bottom:0; }
+  .eyebrow{ font-family:var(--mono); font-size:10.5px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--water-deep); margin:0 0 4px; }
+  .h2{ font-size:clamp(15px,1.9vw,19px); font-weight:700; margin:0 0 14px; letter-spacing:-.01em; }
+  .lead{ color:var(--ink-soft); font-size:14px; max-width:64ch; margin:0 0 18px; }
+
+  .scroll{ overflow-x:auto; }
+  svg{ display:block; width:100%; height:auto; }
+
+  /* schematic svg element styles */
+  .box{ fill:var(--sheet); stroke:var(--water-deep); stroke-width:1.6; }
+  .box-title{ font:600 13.5px var(--sans); fill:var(--ink); }
+  .box-sub{ font:11px var(--mono); fill:var(--ink-soft); }
+  .badge{ fill:var(--badge); }
+  .badge-t{ font:700 13px var(--mono); fill:var(--badge-ink); }
+  .flow{ fill:none; stroke:var(--water); stroke-width:3.4; }
+  .waste{ fill:none; stroke:var(--waste); stroke-width:2.4; }
+  .air{ fill:none; stroke:var(--air); stroke-width:2; stroke-dasharray:7 5; }
+  .o2{ fill:none; stroke:var(--o2); stroke-width:2; stroke-dasharray:7 5; }
+  .heat{ fill:none; stroke:var(--heat); stroke-width:2; stroke-dasharray:2 4; }
+  .rate{ font:600 10.5px var(--mono); fill:var(--water-deep); }
+  .tag{ font:600 11px var(--sans); }
+  .tag-sub{ font:10px var(--mono); fill:var(--ink-soft); }
+  .panel{ fill:var(--grid); stroke:var(--line); stroke-width:1; }
+  .panel-t{ font:700 12px var(--mono); fill:var(--ink); letter-spacing:.08em; }
+  .stat-k{ font:10px var(--mono); fill:var(--ink-soft); }
+  .stat-v{ font:700 14px var(--sans); fill:var(--ink); }
+
+  /* legend */
+  .legend{ display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px;
+    font-size:12.5px; color:var(--ink-soft); }
+  .legend span{ display:inline-flex; align-items:center; gap:8px; }
+  .swatch{ width:26px; height:0; border-top-width:3px; border-top-style:solid; display:inline-block; }
+  .sw-water{ border-color:var(--water); }
+  .sw-waste{ border-color:var(--waste); }
+  .sw-air{ border-color:var(--air); border-top-style:dashed; }
+  .sw-o2{ border-color:var(--o2); border-top-style:dashed; }
+  .sw-heat{ border-color:var(--heat); border-top-style:dotted; }
+
+  /* schedule table */
+  table{ width:100%; border-collapse:collapse; font-size:13px; min-width:640px; }
+  thead th{ text-align:left; font-family:var(--mono); font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-soft); padding:10px 12px;
+    border-bottom:1.5px solid var(--line); white-space:nowrap; }
+  tbody td{ padding:11px 12px; border-bottom:1px solid var(--hair); vertical-align:top; }
+  tbody tr:hover{ background:var(--grid); }
+  .num{ font-family:var(--mono); font-weight:700; color:var(--water-deep); }
+  .eq{ font-weight:600; }
+  .dim{ font-family:var(--mono); font-size:12px; white-space:nowrap; }
+  td.tabnum{ font-variant-numeric:tabular-nums; }
+
+  /* parameter cards */
+  .cards{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+  .card{ border:1px solid var(--hair); border-left:3px solid var(--water);
+    padding:12px 14px; background:var(--sheet); }
+  .card .k{ font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 4px; }
+  .card .v{ font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; margin:0; }
+  .card .u{ font-size:12px; color:var(--ink-soft); font-weight:500; }
+
+  .notecols{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:22px; }
+  .notecols h3{ font-size:13.5px; margin:0 0 8px; display:flex; align-items:center; gap:8px; }
+  .dot{ width:9px; height:9px; border-radius:2px; display:inline-block; }
+  .notecols ul{ margin:0; padding-left:18px; color:var(--ink-soft); font-size:13px; }
+  .notecols li{ margin-bottom:6px; }
+  .notecols strong{ color:var(--ink); font-weight:600; }
+
+  footer{ padding:16px clamp(16px,2.6vw,30px); display:flex; flex-wrap:wrap; gap:6px 18px;
+    justify-content:space-between; font-family:var(--mono); font-size:10.5px;
+    color:var(--ink-soft); letter-spacing:.04em; }
+  .disclaimer{ max-width:100%; }
+</style>
+</head>
+<body>
+  <div class="sheet">
+   <div class="sheet__inner">
+
+    <!-- ============ TITLE BLOCK ============ -->
+    <div class="titleblock">
+      <div class="tb-cell">
+        <p class="eyebrow" style="margin-bottom:6px">Recirculating Aquaculture System · Saltwater</p>
+        <h1 class="tb-title">Budget <span class="tb-sci">Seriola lalandi</span> RAS</h1>
+        <p class="tb-sub">Yellowtail Kingfish · pilot / small-commercial grow-out</p>
+      </div>
+      <div class="tb-cell">
+        <p class="tb-k">Drawing</p><p class="tb-v">RAS-001 · PFD</p>
+      </div>
+      <div class="tb-cell">
+        <p class="tb-k">Scale</p><p class="tb-v">Schematic / NTS</p>
+      </div>
+      <div class="tb-cell">
+        <p class="tb-k">Rev · Date</p><p class="tb-v">A · 2026-07-23</p>
+      </div>
+    </div>
+
+    <!-- ============ PROCESS FLOW SCHEMATIC ============ -->
+    <section>
+      <p class="eyebrow">Sheet 1 — Process flow diagram</p>
+      <h2 class="h2">Water treatment loop &amp; equipment flow</h2>
+      <p class="lead">Water recirculates clockwise 1 → 8. Culture water leaves the tanks, is cleaned of
+        solids, ammonia and CO₂, re-oxygenated and disinfected, then returned. Utilities (air, oxygen, heat)
+        inject into the loop; solids and foam waste leave it.</p>
+
+      <div class="scroll">
+      <svg viewBox="0 0 960 560" role="img"
+           aria-label="Recirculating aquaculture process flow: culture tanks, solids removal, pump sump, MBBR biofilter, protein skimmer, CO2 degasser, oxygenator, UV sterilizer arranged in a loop.">
+        <defs>
+          <marker id="aWater" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--water)"/></marker>
+          <marker id="aWaste" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--waste)"/></marker>
+          <marker id="aAir" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--air)"/></marker>
+          <marker id="aO2" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--o2)"/></marker>
+          <marker id="aHeat" markerWidth="9" markerHeight="9" refX="6.5" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--heat)"/></marker>
+        </defs>
+
+        <!-- WATER FLOW ARROWS (loop) -->
+        <path class="flow" marker-end="url(#aWater)" d="M230,116 L272,116"/>
+        <path class="flow" marker-end="url(#aWater)" d="M470,116 L512,116"/>
+        <path class="flow" marker-end="url(#aWater)" d="M710,116 L752,116"/>
+        <path class="flow" marker-end="url(#aWater)" d="M855,162 L855,390"/>
+        <path class="flow" marker-end="url(#aWater)" d="M760,444 L718,444"/>
+        <path class="flow" marker-end="url(#aWater)" d="M520,444 L478,444"/>
+        <path class="flow" marker-end="url(#aWater)" d="M280,444 L238,444"/>
+        <path class="flow" marker-end="url(#aWater)" d="M135,398 L135,168"/>
+
+        <!-- flow-rate callouts -->
+        <text class="rate" x="251" y="106" text-anchor="middle">≈80 m³/h</text>
+        <text class="rate" x="872" y="285" writing-mode="tb" >gravity ↓</text>
+        <text class="rate" x="135" y="290" text-anchor="middle" transform="rotate(-90 135 290)">clean return ↑</text>
+
+        <!-- UTILITY / WASTE ARROWS -->
+        <!-- solids waste up-out from box2 -->
+        <path class="waste" marker-end="url(#aWaste)" d="M375,70 L375,32"/>
+        <text class="tag" x="375" y="22" text-anchor="middle" fill="var(--waste)">Sludge → settling / discharge</text>
+        <!-- heat into sump (box3) -->
+        <path class="heat" marker-end="url(#aHeat)" d="M615,32 L615,68"/>
+        <text class="tag" x="615" y="22" text-anchor="middle" fill="var(--heat)">Heat · titanium HX + heat pump</text>
+        <!-- air into MBBR (box4) -->
+        <path class="air" marker-end="url(#aAir)" d="M855,32 L855,68"/>
+        <text class="tag" x="855" y="22" text-anchor="middle" fill="var(--air)">Air · regenerative blower</text>
+        <!-- O2 into oxygenator (box7) from below -->
+        <path class="o2" marker-end="url(#aO2)" d="M375,530 L375,492"/>
+        <text class="tag" x="375" y="548" text-anchor="middle" fill="var(--o2)">O₂ · concentrator / LOX</text>
+        <!-- foam waste down-out from skimmer (box5) -->
+        <path class="waste" marker-end="url(#aWaste)" d="M855,490 L855,528"/>
+        <text class="tag" x="855" y="546" text-anchor="middle" fill="var(--waste)">Foam / DOC waste out</text>
+
+        <!-- ===== EQUIPMENT BOXES ===== -->
+        <!-- 1 Culture Tanks -->
+        <g>
+          <rect class="box" x="40" y="70" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="60" cy="90" r="13"/><text class="badge-t" x="60" y="94.5" text-anchor="middle">1</text>
+          <text class="box-title" x="135" y="112" text-anchor="middle">Culture Tanks</text>
+          <text class="box-sub" x="135" y="131" text-anchor="middle">2 × Ø5.0 m circular</text>
+          <text class="box-sub" x="135" y="146" text-anchor="middle">1.2 m deep · ~20 m³ ea</text>
+        </g>
+        <!-- 2 Solids removal -->
+        <g>
+          <rect class="box" x="280" y="70" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="300" cy="90" r="13"/><text class="badge-t" x="300" y="94.5" text-anchor="middle">2</text>
+          <text class="box-title" x="375" y="112" text-anchor="middle">Solids Removal</text>
+          <text class="box-sub" x="375" y="131" text-anchor="middle">Radial-flow settler</text>
+          <text class="box-sub" x="375" y="146" text-anchor="middle">Ø1.5 m · 60 µm screen</text>
+        </g>
+        <!-- 3 Pump sump -->
+        <g>
+          <rect class="box" x="520" y="70" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="540" cy="90" r="13"/><text class="badge-t" x="540" y="94.5" text-anchor="middle">3</text>
+          <text class="box-title" x="615" y="112" text-anchor="middle">Pump Sump</text>
+          <text class="box-sub" x="615" y="131" text-anchor="middle">~3 m³ reservoir</text>
+          <text class="box-sub" x="615" y="146" text-anchor="middle">1 duty + 1 standby</text>
+        </g>
+        <!-- 4 MBBR -->
+        <g>
+          <rect class="box" x="760" y="70" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="780" cy="90" r="13"/><text class="badge-t" x="780" y="94.5" text-anchor="middle">4</text>
+          <text class="box-title" x="855" y="112" text-anchor="middle">MBBR Biofilter</text>
+          <text class="box-sub" x="855" y="131" text-anchor="middle">Moving-bed bioreactor</text>
+          <text class="box-sub" x="855" y="146" text-anchor="middle">~8 m³ · 60% K1 media</text>
+        </g>
+        <!-- 5 Protein skimmer -->
+        <g>
+          <rect class="box" x="760" y="398" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="780" cy="418" r="13"/><text class="badge-t" x="780" y="422.5" text-anchor="middle">5</text>
+          <text class="box-title" x="855" y="440" text-anchor="middle">Protein Skimmer</text>
+          <text class="box-sub" x="855" y="459" text-anchor="middle">Foam fractionator</text>
+          <text class="box-sub" x="855" y="474" text-anchor="middle">Ø0.6 m · venturi air</text>
+        </g>
+        <!-- 6 CO2 degasser -->
+        <g>
+          <rect class="box" x="520" y="398" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="540" cy="418" r="13"/><text class="badge-t" x="540" y="422.5" text-anchor="middle">6</text>
+          <text class="box-title" x="615" y="440" text-anchor="middle">CO₂ Degasser</text>
+          <text class="box-sub" x="615" y="459" text-anchor="middle">Cascade / trickle tower</text>
+          <text class="box-sub" x="615" y="474" text-anchor="middle">1.2 m packed height</text>
+        </g>
+        <!-- 7 Oxygenator -->
+        <g>
+          <rect class="box" x="280" y="398" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="300" cy="418" r="13"/><text class="badge-t" x="300" y="422.5" text-anchor="middle">7</text>
+          <text class="box-title" x="375" y="440" text-anchor="middle">Oxygenator</text>
+          <text class="box-sub" x="375" y="459" text-anchor="middle">Low-head oxygenator</text>
+          <text class="box-sub" x="375" y="474" text-anchor="middle">DO ≥ 95% sat</text>
+        </g>
+        <!-- 8 UV -->
+        <g>
+          <rect class="box" x="40" y="398" width="190" height="92" rx="6"/>
+          <circle class="badge" cx="60" cy="418" r="13"/><text class="badge-t" x="60" y="422.5" text-anchor="middle">8</text>
+          <text class="box-title" x="135" y="440" text-anchor="middle">UV Sterilizer</text>
+          <text class="box-sub" x="135" y="459" text-anchor="middle">UV-C disinfection</text>
+          <text class="box-sub" x="135" y="474" text-anchor="middle">~80 m³/h · 40 mJ/cm²</text>
+        </g>
+
+        <!-- ===== CENTER STATS PANEL ===== -->
+        <g>
+          <rect class="panel" x="288" y="196" width="384" height="168" rx="8"/>
+          <text class="panel-t" x="480" y="222" text-anchor="middle">RECIRCULATION LOOP · SALTWATER</text>
+          <line x1="316" y1="234" x2="644" y2="234" stroke="var(--line)"/>
+          <!-- stats grid 3 cols x 2 rows -->
+          <g>
+            <text class="stat-k" x="330" y="258">DESIGN FLOW</text>
+            <text class="stat-v" x="330" y="277">≈ 80 m³/h</text>
+            <text class="stat-k" x="452" y="258">TURNOVER</text>
+            <text class="stat-v" x="452" y="277">≈ 1.4 ×/h</text>
+            <text class="stat-k" x="562" y="258">SYSTEM VOL</text>
+            <text class="stat-v" x="562" y="277">≈ 55 m³</text>
+
+            <text class="stat-k" x="330" y="312">TEMPERATURE</text>
+            <text class="stat-v" x="330" y="331">22–24 °C</text>
+            <text class="stat-k" x="452" y="312">SALINITY</text>
+            <text class="stat-v" x="452" y="331">22–30 ppt</text>
+            <text class="stat-k" x="562" y="312">MAX BIOMASS</text>
+            <text class="stat-v" x="562" y="331">≤ 1.5 t</text>
+          </g>
+          <text class="tag-sub" x="480" y="352" text-anchor="middle">≈ 90–95% water reused · make-up ≈ 5–10%/day</text>
+        </g>
+      </svg>
+      </div>
+
+      <div class="legend">
+        <span><i class="swatch sw-water"></i> Culture water flow</span>
+        <span><i class="swatch sw-waste"></i> Solids / foam waste out</span>
+        <span><i class="swatch sw-air"></i> Process air (blower)</span>
+        <span><i class="swatch sw-o2"></i> Oxygen injection</span>
+        <span><i class="swatch sw-heat"></i> Heating / temp control</span>
+      </div>
+    </section>
+
+    <!-- ============ EQUIPMENT SCHEDULE ============ -->
+    <section>
+      <p class="eyebrow">Sheet 2 — Equipment schedule</p>
+      <h2 class="h2">Bill of major equipment</h2>
+      <div class="scroll">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Equipment</th><th>Type</th><th>General dimensions</th><th>Function</th><th>Budget note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="num">1</td><td class="eq">Culture tanks (×2)</td><td>Circular, dual-drain</td>
+              <td class="dim">Ø5.0 m × 1.2 m · ~20 m³ ea</td>
+              <td>Hold &amp; grow fish; centre drain sweeps solids out.</td>
+              <td>Corrugated ring + PE liner instead of moulded FRP.</td>
+            </tr>
+            <tr>
+              <td class="num">2</td><td class="eq">Solids removal</td><td>Radial-flow settler</td>
+              <td class="dim">Ø1.5 m × 1.8 m · 60 µm screen</td>
+              <td>Drop out settleable solids before biofilter.</td>
+              <td>Swirl separator far cheaper than a rotary drum filter.</td>
+            </tr>
+            <tr>
+              <td class="num">3</td><td class="eq">Pump sump + pumps</td><td>Low sump, 2 pumps</td>
+              <td class="dim">~3 m³ · 2 × ~1.5 kW</td>
+              <td>Collects water at low point; lifts it through the loop.</td>
+              <td>1 duty / 1 standby; auto changeover on failure.</td>
+            </tr>
+            <tr>
+              <td class="num">4</td><td class="eq">MBBR biofilter</td><td>Moving-bed bioreactor</td>
+              <td class="dim">~8 m³ · 60% K1 fill</td>
+              <td>Bacteria convert toxic ammonia → nitrite → nitrate.</td>
+              <td>IBC totes / lined tank; loose K1 media, air-mixed.</td>
+            </tr>
+            <tr>
+              <td class="num">5</td><td class="eq">Protein skimmer</td><td>Foam fractionator</td>
+              <td class="dim">Ø0.6 m × 2.2 m</td>
+              <td>Strips fine solids &amp; dissolved organics (saltwater only).</td>
+              <td>Venturi injector off the main pump saves an ozone rig.</td>
+            </tr>
+            <tr>
+              <td class="num">6</td><td class="eq">CO₂ degasser</td><td>Cascade / trickle tower</td>
+              <td class="dim">1.2 m packed · random media</td>
+              <td>Vents dissolved CO₂ that would suppress fish appetite.</td>
+              <td>Can stack on top of the sump to reuse head &amp; footprint.</td>
+            </tr>
+            <tr>
+              <td class="num">7</td><td class="eq">Oxygenator</td><td>Low-head oxygenator (LHO)</td>
+              <td class="dim">1.0 × 1.0 × 1.2 m box</td>
+              <td>Dissolves pure O₂ to ≥95% saturation before return.</td>
+              <td>Multi-stage LHO cheaper than a pressurised O₂ cone.</td>
+            </tr>
+            <tr>
+              <td class="num">8</td><td class="eq">UV sterilizer</td><td>UV-C inline unit</td>
+              <td class="dim">~80 m³/h · 40 mJ/cm²</td>
+              <td>Kills pathogens on the return line to the tanks.</td>
+              <td>Size to full flow; amalgam lamps for fewer changeouts.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ LAYOUT / PLAN VIEW ============ -->
+    <section>
+      <p class="eyebrow">Sheet 3 — General arrangement</p>
+      <h2 class="h2">Building layout &amp; footprint — plan view</h2>
+      <p class="lead">Single-span shed ≈ 15.0 × 8.0 m. Tanks sit centrally; the treatment skid runs
+        along one long wall so pipe runs stay short; plant &amp; make-up water tuck into one end.</p>
+
+      <div class="scroll">
+      <svg viewBox="0 0 960 470" role="img"
+           aria-label="Top-down plan of the RAS building showing two round tanks, a treatment skid along one wall, and a plant room, with overall dimensions of 15 by 8 metres.">
+        <defs>
+          <marker id="dimA" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto">
+            <path d="M0,3 L7,0 L7,6 Z" fill="var(--ink-soft)"/></marker>
+          <marker id="dimB" markerWidth="8" markerHeight="8" refX="4" refY="3" orient="auto">
+            <path d="M7,3 L0,0 L0,6 Z" fill="var(--ink-soft)"/></marker>
+        </defs>
+
+        <!-- building shell: 660x352 px = 15.0 x 8.0 m (44 px/m) -->
+        <rect x="120" y="50" width="660" height="352" fill="var(--grid)" stroke="var(--ink)" stroke-width="2"/>
+        <!-- door -->
+        <rect x="120" y="205" width="8" height="60" fill="var(--sheet)" stroke="var(--ink)" stroke-width="1.5"/>
+        <text x="96" y="240" text-anchor="middle" class="box-sub" transform="rotate(-90 96 240)">DOOR</text>
+
+        <!-- culture tanks Ø5.0 m = 220 px -->
+        <g>
+          <circle cx="300" cy="176" r="110" fill="var(--sheet)" stroke="var(--water-deep)" stroke-width="2"/>
+          <circle cx="300" cy="176" r="8" fill="var(--water-deep)"/>
+          <text class="box-title" x="300" y="150" text-anchor="middle">Tank 1</text>
+          <text class="box-sub" x="300" y="200" text-anchor="middle">Ø5.0 m</text>
+        </g>
+        <!-- second tank -->
+        <g>
+          <circle cx="560" cy="176" r="110" fill="var(--sheet)" stroke="var(--water-deep)" stroke-width="2"/>
+          <circle cx="560" cy="176" r="8" fill="var(--water-deep)"/>
+          <text class="box-title" x="560" y="150" text-anchor="middle">Tank 2</text>
+          <text class="box-sub" x="560" y="200" text-anchor="middle">Ø5.0 m</text>
+        </g>
+
+        <!-- treatment skid along bottom wall -->
+        <g>
+          <rect x="140" y="312" width="470" height="72" fill="var(--sheet)" stroke="var(--water-deep)" stroke-width="1.6"/>
+          <line x1="234" y1="312" x2="234" y2="384" stroke="var(--hair)"/>
+          <line x1="328" y1="312" x2="328" y2="384" stroke="var(--hair)"/>
+          <line x1="422" y1="312" x2="422" y2="384" stroke="var(--hair)"/>
+          <line x1="516" y1="312" x2="516" y2="384" stroke="var(--hair)"/>
+          <text class="box-sub" x="187" y="345" text-anchor="middle">Settler</text><text class="box-sub" x="187" y="360" text-anchor="middle">②</text>
+          <text class="box-sub" x="281" y="345" text-anchor="middle">Sump</text><text class="box-sub" x="281" y="360" text-anchor="middle">③</text>
+          <text class="box-sub" x="375" y="345" text-anchor="middle">MBBR</text><text class="box-sub" x="375" y="360" text-anchor="middle">④</text>
+          <text class="box-sub" x="469" y="345" text-anchor="middle">Skimmer</text><text class="box-sub" x="469" y="360" text-anchor="middle">⑤ ⑥</text>
+          <text class="box-sub" x="563" y="345" text-anchor="middle">O₂ · UV</text><text class="box-sub" x="563" y="360" text-anchor="middle">⑦ ⑧</text>
+          <text class="box-title" x="375" y="304" text-anchor="middle">Water-treatment skid</text>
+        </g>
+
+        <!-- plant room -->
+        <g>
+          <rect x="632" y="62" width="136" height="150" fill="var(--sheet)" stroke="var(--ink-soft)" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <text class="box-title" x="700" y="86" text-anchor="middle">Plant room</text>
+          <text class="box-sub" x="700" y="108" text-anchor="middle">Air blower</text>
+          <text class="box-sub" x="700" y="126" text-anchor="middle">O₂ generator</text>
+          <text class="box-sub" x="700" y="144" text-anchor="middle">Heat pump</text>
+          <text class="box-sub" x="700" y="162" text-anchor="middle">Control panel</text>
+          <text class="box-sub" x="700" y="180" text-anchor="middle">Generator</text>
+        </g>
+
+        <!-- salt / make-up tank -->
+        <g>
+          <circle cx="700" cy="300" r="52" fill="var(--sheet)" stroke="var(--water-deep)" stroke-width="1.6" stroke-dasharray="4 3"/>
+          <text class="box-sub" x="700" y="296" text-anchor="middle">Salt / make-up</text>
+          <text class="box-sub" x="700" y="312" text-anchor="middle">Ø2.5 m</text>
+        </g>
+
+        <!-- overall dimension lines -->
+        <!-- width 15 m along bottom -->
+        <line x1="120" y1="430" x2="780" y2="430" stroke="var(--ink-soft)" stroke-width="1" marker-start="url(#dimB)" marker-end="url(#dimA)"/>
+        <line x1="120" y1="402" x2="120" y2="438" stroke="var(--ink-soft)" stroke-width="1"/>
+        <line x1="780" y1="402" x2="780" y2="438" stroke="var(--ink-soft)" stroke-width="1"/>
+        <rect x="428" y="420" width="44" height="20" fill="var(--sheet)"/>
+        <text class="dim" x="450" y="434" text-anchor="middle" fill="var(--ink)" style="font-size:12px">15.0 m</text>
+
+        <!-- depth 8 m along right -->
+        <line x1="812" y1="50" x2="812" y2="402" stroke="var(--ink-soft)" stroke-width="1" marker-start="url(#dimB)" marker-end="url(#dimA)"/>
+        <line x1="784" y1="50" x2="820" y2="50" stroke="var(--ink-soft)" stroke-width="1"/>
+        <line x1="784" y1="402" x2="820" y2="402" stroke="var(--ink-soft)" stroke-width="1"/>
+        <rect x="794" y="216" width="36" height="20" fill="var(--sheet)"/>
+        <text class="dim" x="812" y="230" text-anchor="middle" fill="var(--ink)" style="font-size:12px" transform="rotate(-90 812 223)">8.0 m</text>
+
+        <text class="tag-sub" x="120" y="24">PLAN VIEW · looking down · scale ≈ 44 px : 1 m</text>
+      </svg>
+      </div>
+    </section>
+
+    <!-- ============ KEY PARAMETERS ============ -->
+    <section>
+      <p class="eyebrow">Design basis</p>
+      <h2 class="h2">Key operating parameters</h2>
+      <div class="cards">
+        <div class="card"><p class="k">Temperature</p><p class="v">23 <span class="u">°C</span></p></div>
+        <div class="card"><p class="k">Salinity</p><p class="v">22–30 <span class="u">ppt</span></p></div>
+        <div class="card"><p class="k">Dissolved O₂</p><p class="v">≥ 6 <span class="u">mg/L</span></p></div>
+        <div class="card"><p class="k">pH</p><p class="v">7.4–7.8</p></div>
+        <div class="card"><p class="k">Stocking</p><p class="v">≤ 35 <span class="u">kg/m³</span></p></div>
+        <div class="card"><p class="k">Loop flow</p><p class="v">≈ 80 <span class="u">m³/h</span></p></div>
+        <div class="card"><p class="k">Daily make-up</p><p class="v">5–10 <span class="u">%/day</span></p></div>
+        <div class="card"><p class="k">System volume</p><p class="v">≈ 55 <span class="u">m³</span></p></div>
+      </div>
+    </section>
+
+    <!-- ============ ENGINEERING NOTES ============ -->
+    <section>
+      <p class="eyebrow">Engineering notes</p>
+      <h2 class="h2">What each system has to do</h2>
+      <div class="notecols">
+        <div>
+          <h3><span class="dot" style="background:var(--water)"></span>Water &amp; pipework</h3>
+          <ul>
+            <li><strong>Gravity down, pump up:</strong> tanks → settler → sump run on gravity; pumps then lift water through biofilter, degasser, oxygenator and UV.</li>
+            <li><strong>Marine-grade only:</strong> PVC/HDPE pipe, titanium heat exchanger, FRP or lined tanks — salt water eats mild steel.</li>
+            <li><strong>Slope solids lines</strong> ≥1% so settled sludge keeps moving to the settler.</li>
+          </ul>
+        </div>
+        <div>
+          <h3><span class="dot" style="background:var(--air)"></span>Air, oxygen &amp; heat</h3>
+          <ul>
+            <li><strong>Blower</strong> feeds MBBR mixing and the skimmer venturi — one machine, two jobs.</li>
+            <li><strong>Pure O₂</strong> (concentrator or LOX) into the oxygenator is the real safety margin at high density.</li>
+            <li><strong>Heat pump + titanium HX</strong> holds 23 °C; insulate the shed to cut running cost.</li>
+          </ul>
+        </div>
+        <div>
+          <h3><span class="dot" style="background:var(--waste)"></span>Waste &amp; safety</h3>
+          <ul>
+            <li><strong>Two waste exits:</strong> settled sludge from the settler, foam/DOC from the skimmer — both leave the loop, neither returns.</li>
+            <li><strong>Alarms + standby:</strong> low-DO and pump-fail alarms, standby pump, and a backup generator prevent a total loss.</li>
+            <li><strong>Biosecurity:</strong> UV on the return line; quarantine new stock before adding.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+   </div>
+  </div>
+
+  <footer>
+    <span>RAS-001 · Budget Seriola lalandi RAS · Process flow &amp; general arrangement</span>
+    <span class="disclaimer">Concept schematic · not for construction — confirm sizing, loads &amp; permits with a qualified engineer</span>
+  </footer>
+</body>
+</html>
